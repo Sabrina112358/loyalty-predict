@@ -28,3 +28,17 @@ Com base nessas transações são identificamos a atividade das pessoas e o nív
 - MAU: monthly active user
 - WAC
 - DAC
+
+### Ciclo de Vida Do Usuário
+
+Como parte do modelo de loyalty prediction, cada usuário é classificado em um estágio de ciclo de vida com base no seu padrão de recência e frequência de compras. Essa segmentação permite direcionar ações de retenção, reativação e fidelização de forma mais assertiva, de acordo com o momento de relacionamento de cada usuário com a marca.
+
+Os estágios definidos são:
+
+- Curioso — Usuário novo, que iniciou seu relacionamento recentemente.
+- Fiel — Usuário ativo e recorrente, com interações frequentes e recentes.
+- Reconquistado — cliente que havia dado sinais de esfriamento e voltou a comprar recentemente.
+- Recuperado — Usuário que estava inativo há bastante tempo e retomou o consumo recentemente.
+- Turista — Usuário com engajamento moderado, sem comprar há algumas semanas.
+- Desencantado — Usuário com sinais de afastamento, sem comprar há um período mais longo.
+- Perdido — Usuário inativo há muito tempo, com baixa probabilidade de retorno espontâneo.
