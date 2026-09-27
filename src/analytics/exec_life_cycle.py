@@ -3,6 +3,9 @@
 import pandas as pd
 import sqlalchemy 
 
+import datetime
+from tqdm import tqdm
+
 
 # %%
 
@@ -18,34 +21,18 @@ engine_app = sqlalchemy.create_engine("sqlite:///../../data/loyalty-system/datab
 engine_analytical = sqlalchemy.create_engine("sqlite:///../../data/analytics/database.db")
 # %%
 
-dates = {
-        '2024-06-01',
-        '2024-07-01',
-        '2024-08-01',
-        '2024-09-01',
-        '2024-10-01',
-        '2024-11-01',
-        '2024-12-01',
-        '2025-05-01', 
-        '2025-06-01', 
-        '2025-07-01', 
-        '2025-08-01', 
-        '2025-09-01', 
-        '2025-10-01', 
-        '2025-11-01', 
-        '2025-12-01', 
-        '2026-01-01', 
-        '2026-02-01', 
-        '2026-03-01', 
-        '2026-04-01', 
-        '2026-05-01', 
-        '2026-06-01', 
-        '2026-07-01', 
-        '2026-08-01', 
-        '2026-09-01'
-}
+def date_range(start, stop):
+    dates = []
+    while start <= stop:
+         dates.append(start)
+         dt_start = datetime.datetime.strptime(start, '%Y-%m-%d') + datetime.timedelta(days=1)
+         start = datetime.datetime.strftime(dt_start, '%Y-%m-%d')
+    return dates
 
-for date in dates:
+dates = date_range('2025-09-01', '2025-12-01')
+
+# %%
+for date in tqdm(dates):
 
     with engine_analytical.connect() as conn:
             try:            
@@ -56,9 +43,7 @@ for date in dates:
                 print(f"Error deleting data for {date}: {e}")
 
                  
-            print(f"Importing data for {date}...")
+            # print(f"Importing data for {date}...")
             df = pd.read_sql_query(query.format(date=date), engine_app)
             df.to_sql("life_cycle", engine_analytical, if_exists="append", index=False)
 
-    
-# %%
