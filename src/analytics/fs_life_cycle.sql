@@ -4,7 +4,7 @@ with tb_life_cycle_atual as (
         qtdFrequencia,
         descLifeCycle as descLifeCycleAtual
     from life_cycle
-    where dtRef = date('2025-10-01', '-1 day')
+    where dtRef = date('{date}', '-1 day')
 ),
 
 tb_life_cycle_d28 as (
@@ -12,7 +12,7 @@ tb_life_cycle_d28 as (
         IdCliente,
         descLifeCycle as descLifeCycleD28
     from life_cycle
-    where dtRef = date('2025-10-01', '-29 day')
+    where dtRef = date('{date}', '-29 day')
 ), 
 
 tb_share_ciclos as (
@@ -59,6 +59,6 @@ tb_join as (
 )
 
 select 
-    date('2025-10-01', '-1 day') as dtRef,
+    date('{date}', '-1 day') as dtRef,
     *
 from tb_join

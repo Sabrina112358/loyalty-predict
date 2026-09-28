@@ -3,37 +3,37 @@
         substr(DtCriacao, 0, 11) as  dtDia,
         cast(substr(DtCriacao, 12, 2) as int) as dtHora
     from transacoes
-    where dtCriacao < '2025-10-01'
+    where dtCriacao < '{date}'
 ),
 
 tb_agg_transacoes as (
     select 
         idCliente, 
 
-        max(julianday(date('2025-10-01', '-1 day')) - julianday(DtCriacao)) as idadeDias,
+        max(julianday(date('{date}', '-1 day')) - julianday(DtCriacao)) as idadeDias,
 
         count(distinct  dtDia) as qtdAtivacoesVida,
-        count(distinct case when  dtDia >= date('2025-10-01', '-7 day') then  dtDia end) as qtdAtivacoesVidaD7,
-        count(distinct case when  dtDia >= date('2025-10-01', '-14 day') then  dtDia end) as qtdAtivacoesVidaD14,
-        count(distinct case when  dtDia >= date('2025-10-01', '-28 day') then  dtDia end) as qtdAtivacoesVidaD28,
-        count(distinct case when  dtDia >= date('2025-10-01', '-56 day') then  dtDia end) as qtdAtivacoesVidaD56,
+        count(distinct case when  dtDia >= date('{date}', '-7 day') then  dtDia end) as qtdAtivacoesVidaD7,
+        count(distinct case when  dtDia >= date('{date}', '-14 day') then  dtDia end) as qtdAtivacoesVidaD14,
+        count(distinct case when  dtDia >= date('{date}', '-28 day') then  dtDia end) as qtdAtivacoesVidaD28,
+        count(distinct case when  dtDia >= date('{date}', '-56 day') then  dtDia end) as qtdAtivacoesVidaD56,
 
         count(distinct idTransacao) as qtdTransacoesVida,
-        count(distinct case when  dtDia >= date('2025-10-01', '-7 day') then idTransacao end) as qtdTransacoesVidaD7,
-        count(distinct case when  dtDia >= date('2025-10-01', '-14 day') then idTransacao end) as qtdTransacoesVidaD14,
-        count(distinct case when  dtDia >= date('2025-10-01', '-28 day') then idTransacao end) as qtdTransacoesVidaD28,
-        count(distinct case when  dtDia >= date('2025-10-01', '-56 day') then idTransacao end) as qtdTransacoesVidaD56,
+        count(distinct case when  dtDia >= date('{date}', '-7 day') then idTransacao end) as qtdTransacoesVidaD7,
+        count(distinct case when  dtDia >= date('{date}', '-14 day') then idTransacao end) as qtdTransacoesVidaD14,
+        count(distinct case when  dtDia >= date('{date}', '-28 day') then idTransacao end) as qtdTransacoesVidaD28,
+        count(distinct case when  dtDia >= date('{date}', '-56 day') then idTransacao end) as qtdTransacoesVidaD56,
 
         sum(case when qtdePontos > 0 then qtdePontos else 0 end) as qtdPontosVida,
-        sum(case when  dtDia >= date('2025-10-01', '-7 day')  and qtdePontos > 0 then qtdePontos else 0 end) as qtdPontosVidaD7,
-        sum(case when  dtDia >= date('2025-10-01', '-28 day') and qtdePontos > 0 then qtdePontos else 0 end) as qtdPontosVidaD28,
-        sum(case when  dtDia >= date('2025-10-01', '-56 day') and qtdePontos > 0 then qtdePontos else 0 end) as qtdPontosVidaD56,
+        sum(case when  dtDia >= date('{date}', '-7 day')  and qtdePontos > 0 then qtdePontos else 0 end) as qtdPontosVidaD7,
+        sum(case when  dtDia >= date('{date}', '-28 day') and qtdePontos > 0 then qtdePontos else 0 end) as qtdPontosVidaD28,
+        sum(case when  dtDia >= date('{date}', '-56 day') and qtdePontos > 0 then qtdePontos else 0 end) as qtdPontosVidaD56,
 
         sum(case when qtdePontos < 0 then qtdePontos else 0 end) as qtdPontosNegVida,
-        sum(case when  dtDia >= date('2025-10-01', '-7 day')  and qtdePontos < 0 then qtdePontos else 0 end) as qtdPontosNegVidaD7,
-        sum(case when  dtDia >= date('2025-10-01', '-14 day') and qtdePontos < 0 then qtdePontos else 0 end) as qtdPontosNegVidaD14,
-        sum(case when  dtDia >= date('2025-10-01', '-28 day') and qtdePontos < 0 then qtdePontos else 0 end) as qtdPontosNegVidaD28,
-        sum(case when  dtDia >= date('2025-10-01', '-56 day') and qtdePontos < 0 then qtdePontos else 0 end) as qtdPontosNegVidaD56,
+        sum(case when  dtDia >= date('{date}', '-7 day')  and qtdePontos < 0 then qtdePontos else 0 end) as qtdPontosNegVidaD7,
+        sum(case when  dtDia >= date('{date}', '-14 day') and qtdePontos < 0 then qtdePontos else 0 end) as qtdPontosNegVidaD14,
+        sum(case when  dtDia >= date('{date}', '-28 day') and qtdePontos < 0 then qtdePontos else 0 end) as qtdPontosNegVidaD28,
+        sum(case when  dtDia >= date('{date}', '-56 day') and qtdePontos < 0 then qtdePontos else 0 end) as qtdPontosNegVidaD56,
 
         -- Hora está em utc-0, portanto foram somadas 3 horas para coincidir com o horario do
         count(case when dtHora between 10 and 14 then IdTransacao end) as qtdTransacaoManha,
@@ -73,10 +73,10 @@ tb_hora_cliente as(
     select
         idCliente,
         sum(duracao) as duracaoHorasVida,
-        sum(case when  dtDia >= date('2025-10-01', '-7 day') then duracao else 0 end) as qtdHorasD7,
-        sum(case when  dtDia >= date('2025-10-01', '-14 day') then duracao else 0 end) as qtdHorasD14,
-        sum(case when  dtDia >= date('2025-10-01', '-28 day') then duracao else 0 end) as qtdHorasD28,
-        sum(case when  dtDia >= date('2025-10-01', '-56 day') then duracao else 0 end) as qtdHorasD56
+        sum(case when  dtDia >= date('{date}', '-7 day') then duracao else 0 end) as qtdHorasD7,
+        sum(case when  dtDia >= date('{date}', '-14 day') then duracao else 0 end) as qtdHorasD14,
+        sum(case when  dtDia >= date('{date}', '-28 day') then duracao else 0 end) as qtdHorasD28,
+        sum(case when  dtDia >= date('{date}', '-56 day') then duracao else 0 end) as qtdHorasD56
     from tb_horas_dia
     group by idCliente
 ),
@@ -93,7 +93,7 @@ tb_intervalo_dias as (
     select 
         idCliente,
         avg(julianday( dtDia) - julianday(lagdia)) as avgIntervaloDiasVida,
-        avg(case when  dtDia >= date('2025-10-01', '-28 day') then julianday( dtDia) - julianday(lagdia) end) as avgIntervaloDiasD28
+        avg(case when  dtDia >= date('{date}', '-28 day') then julianday( dtDia) - julianday(lagdia) end) as avgIntervaloDiasD28
     from tb_lag_dia
     group by idCliente
 ),
@@ -142,6 +142,6 @@ tb_join as (
 )
 
 select 
-    date('2025-10-01', '-1 day') as dtRef,
+    date('{date}', '-1 day') as dtRef,
     *
 from tb_join 

@@ -4,7 +4,7 @@ with tb_usuario_cursos as (
         descSlugCurso,
         count(descSlugCurso) as qtdEps
     from cursos_episodios_completos
-    where dtCriacao < '2025-10-01'
+    where dtCriacao < '{date}'
     group by idUsuario, descSlugCurso
 ),
 
@@ -74,21 +74,21 @@ tb_atividade as (
         idUsuario,
         max(dtCriacao) as dtCriacao
     from habilidades_usuarios
-    where dtCriacao < '2025-10-01'
+    where dtCriacao < '{date}'
     group by idUsuario
     union all
     select 
         idUsuario,
         max(dtCriacao) as dtCriacao
     from cursos_episodios_completos
-    where dtCriacao < '2025-10-01'
+    where dtCriacao < '{date}'
     group by idUsuario
     union all 
     select 
         idUsuario,
         max(dtRecompensa) as dtCriacao
     from recompensas_usuarios
-    where dtRecompensa < '2025-10-01'
+    where dtRecompensa < '{date}'
     group by idUsuario
 ),
 
@@ -141,6 +141,6 @@ tb_join as (
         on t1.idUsuario = t3.idUsuario
 )
 
-select date('2025-10-01', '-1 day') as dtRef,
+select date('{date}', '-1 day') as dtRef,
     *
 from tb_join
