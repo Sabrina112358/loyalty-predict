@@ -25,7 +25,7 @@ tb_share_ciclos as (
         1. * sum(case when descLifeCycle = '02-Reconquistado' then 1 else 0 end) / count(*) as pctReconquistado,
         1. * sum(case when descLifeCycle = '02-Recuperado' then 1 else 0 end) / count(*) as pctRecuperado
     from life_cycle
-    where dtRef < '2025-09-01'
+    where dtRef < '{date}'
     group by IdCliente
 ),
 
