@@ -24,16 +24,23 @@ tb_agg_transacoes as (
         count(distinct case when  dtDia >= date('{date}', '-28 day') then idTransacao end) as qtdTransacoesVidaD28,
         count(distinct case when  dtDia >= date('{date}', '-56 day') then idTransacao end) as qtdTransacoesVidaD56,
 
-        sum(case when qtdePontos > 0 then qtdePontos else 0 end) as qtdPontosVida,
-        sum(case when  dtDia >= date('{date}', '-7 day')  and qtdePontos > 0 then qtdePontos else 0 end) as qtdPontosVidaD7,
-        sum(case when  dtDia >= date('{date}', '-28 day') and qtdePontos > 0 then qtdePontos else 0 end) as qtdPontosVidaD28,
-        sum(case when  dtDia >= date('{date}', '-56 day') and qtdePontos > 0 then qtdePontos else 0 end) as qtdPontosVidaD56,
+        sum(qtdePontos) AS saldoVida,
+        sum(CASE WHEN dtDia >= date('{date}', '-7 day') THEN qtdePontos ELSE 0 END) AS saldoD7,
+        sum(CASE WHEN dtDia >= date('{date}', '-14 day') THEN qtdePontos ELSE 0 END) AS saldoD14,
+        sum(CASE WHEN dtDia >= date('{date}', '-28 day') THEN qtdePontos ELSE 0 END) AS saldoD28,
+        sum(CASE WHEN dtDia >= date('{date}', '-56 day') THEN qtdePontos ELSE 0 END) AS saldoD56,
 
-        sum(case when qtdePontos < 0 then qtdePontos else 0 end) as qtdPontosNegVida,
-        sum(case when  dtDia >= date('{date}', '-7 day')  and qtdePontos < 0 then qtdePontos else 0 end) as qtdPontosNegVidaD7,
-        sum(case when  dtDia >= date('{date}', '-14 day') and qtdePontos < 0 then qtdePontos else 0 end) as qtdPontosNegVidaD14,
-        sum(case when  dtDia >= date('{date}', '-28 day') and qtdePontos < 0 then qtdePontos else 0 end) as qtdPontosNegVidaD28,
-        sum(case when  dtDia >= date('{date}', '-56 day') and qtdePontos < 0 then qtdePontos else 0 end) as qtdPontosNegVidaD56,
+        sum(CASE WHEN qtdePontos > 0 THEN qtdePontos ELSE 0 END ) AS qtdePontosPosVida,
+        sum(CASE WHEN dtDia >= date('{date}', '-7 day') AND qtdePontos > 0 THEN qtdePontos ELSE 0 END) AS qtdePontosPosD7,
+        sum(CASE WHEN dtDia >= date('{date}', '-14 day') AND qtdePontos > 0 THEN qtdePontos ELSE 0 END) AS qtdePontosPosD14,
+        sum(CASE WHEN dtDia >= date('{date}', '-28 day') AND qtdePontos > 0 THEN qtdePontos ELSE 0 END) AS qtdePontosPosD28,
+        sum(CASE WHEN dtDia >= date('{date}', '-56 day') AND qtdePontos > 0 THEN qtdePontos ELSE 0 END) AS qtdePontosPosD56,
+
+        sum(CASE WHEN qtdePontos < 0 THEN qtdePontos ELSE 0 END ) AS qtdePontosNegVida,
+        sum(CASE WHEN dtDia >= date('{date}', '-7 day') AND qtdePontos < 0 THEN qtdePontos ELSE 0 END) AS qtdePontosNegD7,
+        sum(CASE WHEN dtDia >= date('{date}', '-14 day') AND qtdePontos < 0 THEN qtdePontos ELSE 0 END) AS qtdePontosNegD14,
+        sum(CASE WHEN dtDia >= date('{date}', '-28 day') AND qtdePontos < 0 THEN qtdePontos ELSE 0 END) AS qtdePontosNegD28,
+        sum(CASE WHEN dtDia >= date('{date}', '-56 day') AND qtdePontos < 0 THEN qtdePontos ELSE 0 END) AS qtdePontosNegD56,
 
         -- Hora está em utc-0, portanto foram somadas 3 horas para coincidir com o horario do
         count(case when dtHora between 10 and 14 then IdTransacao end) as qtdTransacaoManha,
@@ -109,8 +116,8 @@ tb_share_produtos as (
         1. * count(case when DescNomeProduto = 'Presença Streak' then t1.IdTransacao end) / count(t1.IdTransacao) as pctPresencaStreak,
         1. * count(case when DescNomeProduto = 'Troca de Pontos StreamElements' then t1.IdTransacao end) / count(t1.IdTransacao) as pctTrocadePontosStreamElements,
         1. * count(case when DescNomeProduto = 'Reembolso: Troca de Pontos StreamElements' then t1.IdTransacao end) / count(t1.IdTransacao) as pctReembolsoTrocadePontosStreamElements,
-        1. * count(case when DescCategoriaProduto = 'rpg' then t1.IdTransacao end) /count(t1.IdTransacao) as pctrpg,
-        1. * count(case when DescCategoriaProduto = 'rpg' then t1.IdTransacao end) /count(t1.IdTransacao) as pctchurn_model
+        1. * count(case when DescCategoriaProduto = 'rpg' then t1.IdTransacao end) /count(t1.IdTransacao) as pctRPG,
+        1. * count(case when DescCategoriaProduto = 'churn_model' then t1.IdTransacao end) /count(t1.IdTransacao) as pctChurnModel
     from tb_transacao t1
     left join transacao_produto t2
     on t1.IdTransacao = t2.IdTransacao 
@@ -127,7 +134,17 @@ tb_join as (
         t2.qtdHorasD28,
         t2.qtdHorasD56,
         t3.avgIntervaloDiasVida,
-        t3.avgIntervaloDiasD28
+        t3.avgIntervaloDiasD28,
+        t4.pctChatMessage,
+        t4.pctAirflowLover,
+        t4.pctRLover,
+        t4.pctResgatarPonei,
+        t4.pctListadepresenca,
+        t4.pctPresencaStreak,
+        t4.pctTrocadePontosStreamElements,
+        t4.pctReembolsoTrocadePontosStreamElements,
+        t4.pctRPG,
+        t4.pctChurnModel
     from
         tb_agg_calc t1
     left join 
